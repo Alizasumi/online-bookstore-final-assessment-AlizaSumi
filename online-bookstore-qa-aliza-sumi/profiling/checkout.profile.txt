@@ -1,0 +1,33 @@
+         126727 function calls (118346 primitive calls) in 0.522 seconds
+
+   Ordered by: cumulative time
+   List reduced from 953 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      7/5    0.000    0.000    0.523    0.105 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\flask\testing.py:204(open)
+      7/5    0.000    0.000    0.512    0.102 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\werkzeug\test.py:1058(open)
+        7    0.000    0.000    0.510    0.073 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\werkzeug\test.py:980(run_wsgi_app)
+        7    0.000    0.000    0.507    0.072 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\werkzeug\test.py:1226(run_wsgi_app)
+        7    0.000    0.000    0.507    0.072 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\flask\app.py:1491(__call__)
+        7    0.000    0.000    0.506    0.072 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\flask\app.py:1441(wsgi_app)
+        7    0.000    0.000    0.500    0.071 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\flask\app.py:867(full_dispatch_request)
+        7    0.000    0.000    0.497    0.071 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\flask\app.py:842(dispatch_request)
+        5    0.000    0.000    0.390    0.078 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\flask\templating.py:138(render_template)
+        5    0.000    0.000    0.386    0.077 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\jinja2\environment.py:1072(get_or_select_template)
+        5    0.000    0.000    0.386    0.077 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\jinja2\environment.py:981(get_template)
+        5    0.000    0.000    0.386    0.077 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\jinja2\environment.py:956(_load_template)
+        4    0.000    0.000    0.386    0.096 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\jinja2\loaders.py:107(load)
+        3    0.000    0.000    0.328    0.109 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\werkzeug\test.py:1159(get)
+        4    0.000    0.000    0.202    0.050 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\flask\templating.py:60(get_source)
+        4    0.000    0.000    0.202    0.050 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\flask\templating.py:91(_get_source_fast)
+        4    0.000    0.000    0.201    0.050 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\jinja2\loaders.py:194(get_source)
+        4    0.199    0.050    0.199    0.050 {built-in method _io.open}
+        2    0.000    0.000    0.196    0.098 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\werkzeug\test.py:1164(post)
+        4    0.000    0.000    0.184    0.046 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\.venv\Lib\site-packages\jinja2\environment.py:731(compile)
+        1    0.000    0.000    0.127    0.127 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\app.py:137(checkout)
+        2    0.000    0.000    0.125    0.063 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\app.py:51(index)
+        1    0.000    0.000    0.105    0.105 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\app.py:148(process_checkout)
+        1    0.000    0.000    0.100    0.100 C:\Users\Jibran2025\OneDrive\Documents\Software_Testing\Final_Assesment\online-bookstore-qa-aliza-sumi\models.py:122(process_payment)
+        1    0.100    0.100    0.100    0.100 {built-in method time.sleep}
+
+

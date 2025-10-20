@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Online Bookstore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Online Bookstore Logo" class="logo">
+            <h1>Online Bookstore</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/cart" class="active">Cart</a>
+                <a href="/checkout">Checkout</a>
+                {% if current_user %}
+                    <a href="/account">Account</a>
+                    <a href="/logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <section class="cart-section">
+        <div class="container">
+            <h2>Your Shopping Cart</h2>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if cart.is_empty() %}
+                <div class="empty-cart">
+                    <h3>Your cart is empty</h3>
+                    <p>Start shopping to add items to your cart!</p>
+                    <a href="/" class="btn btn-primary">Continue Shopping</a>
+                </div>
+            {% else %}
+                <div class="cart-items">
+                    {% for item in cart.get_items() %}
+                    <div class="cart-item">
+                        <div class="item-image">
+                            <img src="{{ url_for('static', filename=item.book.image) }}" alt="{{ item.book.title }}" class="book-thumbnail">
+                        </div>
+                        <div class="item-details">
+                            <h4>{{ item.book.title }}</h4>
+                            <p class="category">{{ item.book.category }}</p>
+                            <p class="price">${{ "%.2f"|format(item.book.price) }}</p>
+                        </div>
+                        <div class="item-quantity">
+                            <label for="quantity-{{ loop.index }}">Quantity:</label>
+                            <form action="/update-cart" method="POST" class="quantity-form">
+                                <input type="hidden" name="title" value="{{ item.book.title }}">
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="99" id="quantity-{{ loop.index }}">
+                                <button type="submit" class="btn btn-sm">Update</button>
+                            </form>
+                        </div>
+                        <div class="item-total">
+                            <strong>${{ "%.2f"|format(item.get_total_price()) }}</strong>
+                        </div>
+                        <div class="item-actions">
+                            <form action="/remove-from-cart" method="POST">
+                                <input type="hidden" name="title" value="{{ item.book.title }}">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to remove this item?')">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="cart-summary">
+                    <div class="summary-details">
+                        <p><strong>Total Items: {{ cart.get_total_items() }}</strong></p>
+                        <p class="total-price"><strong>Total Price: ${{ "%.2f"|format(cart.get_total_price()) }}</strong></p>
+                    </div>
+                    <div class="cart-actions">
+                        <form action="/clear-cart" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-secondary" onclick="return confirm('Are you sure you want to clear your cart?')">Clear Cart</button>
+                        </form>
+                        <a href="/" class="btn btn-secondary">Continue Shopping</a>
+                        <a href="/checkout" class="btn btn-primary">Proceed to Checkout</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+</body>
+</html>

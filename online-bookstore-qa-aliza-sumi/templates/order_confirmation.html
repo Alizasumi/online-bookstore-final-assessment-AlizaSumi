@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Online Bookstore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Online Bookstore Logo" class="logo">
+            <h1>Online Bookstore</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/cart">Cart</a>
+                {% if current_user %}
+                    <a href="/account">Account</a>
+                    <a href="/logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <section class="order-confirmation-section">
+        <div class="container">
+            <div class="confirmation-header">
+                <div class="success-icon">✓</div>
+                <h2>Order Confirmed!</h2>
+                <p>Thank you for your purchase. Your order has been successfully processed.</p>
+            </div>
+            
+            <div class="order-details">
+                <div class="order-info">
+                    <h3>Order Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Order Number:</label>
+                            <span class="order-number">#{{ order.order_id }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Order Date:</label>
+                            <span>{{ order.order_date.strftime('%B %d, %Y at %I:%M %p') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span>{{ order.user_email }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Status:</label>
+                            <span class="status-confirmed">{{ order.status }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-items">
+                    <h3>Items Ordered</h3>
+                    <div class="items-list">
+                        {% for item in order.items %}
+                        <div class="order-item">
+                            <div class="item-info">
+                                <img src="{{ url_for('static', filename=item.book.image) }}" alt="{{ item.book.title }}" class="item-thumbnail">
+                                <div class="item-details">
+                                    <h4>{{ item.book.title }}</h4>
+                                    <p>{{ item.book.category }}</p>
+                                    <p>Quantity: {{ item.quantity }}</p>
+                                </div>
+                            </div>
+                            <div class="item-price">
+                                <p>${{ "%.2f"|format(item.book.price) }} each</p>
+                                <p><strong>${{ "%.2f"|format(item.get_total_price()) }}</strong></p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="shipping-payment-info">
+                    <div class="shipping-details">
+                        <h3>Shipping Address</h3>
+                        <div class="address">
+                            <p><strong>{{ order.shipping_info.name }}</strong></p>
+                            <p>{{ order.shipping_info.address }}</p>
+                            <p>{{ order.shipping_info.city }}, {{ order.shipping_info.zip_code }}</p>
+                        </div>
+                    </div>
+
+                    <div class="payment-details">
+                        <h3>Payment Information</h3>
+                        <p>Payment Method: {{ order.payment_info.method.replace('_', ' ').title() }}</p>
+                        {% if order.payment_info.transaction_id %}
+                        <p>Transaction ID: {{ order.payment_info.transaction_id }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="order-total">
+                    <div class="total-breakdown">
+                        <div class="total-line">
+                            <span>Total Amount:</span>
+                            <span class="total-amount">${{ "%.2f"|format(order.total_amount) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="confirmation-message">
+                    <div class="message-box">
+                        <h4>📧 Confirmation Email Sent</h4>
+                        <p>A confirmation email with your order details has been sent to <strong>{{ order.user_email }}</strong>.</p>
+                        <p>Please check your inbox (and spam folder) for the confirmation email.</p>
+                    </div>
+                </div>
+
+                <div class="next-steps">
+                    <h3>What's Next?</h3>
+                    <ul>
+                        <li>You will receive an email confirmation shortly</li>
+                        <li>Your order will be processed within 1-2 business days</li>
+                        <li>You will receive a shipping notification with tracking information</li>
+                        <li>Estimated delivery: 3-5 business days</li>
+                    </ul>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="/" class="btn btn-primary">Continue Shopping</a>
+                    {% if current_user %}
+                        <a href="/account" class="btn btn-secondary">View Order History</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

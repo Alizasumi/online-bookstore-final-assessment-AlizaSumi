@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Online Bookstore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Online Bookstore Logo" class="logo">
+            <h1>Online Bookstore</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/cart">Cart</a>
+                <a href="/account" class="active">Account</a>
+                <a href="/logout">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="account-section">
+        <div class="container">
+            <h2>My Account</h2>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="account-content">
+                <!-- Profile Information -->
+                <div class="profile-section">
+                    <h3>Profile Information</h3>
+                    <form action="/update-profile" method="post" class="profile-form">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" value="{{ current_user.name }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" value="{{ current_user.email }}" readonly>
+                            <small>Email cannot be changed</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Default Shipping Address</label>
+                            <textarea id="address" name="address" rows="3">{{ current_user.address }}</textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new_password">New Password (leave blank to keep current)</label>
+                            <input type="password" id="new_password" name="new_password">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+
+                <!-- Order History -->
+                <div class="order-history-section">
+                    <h3>Order History</h3>
+                    {% if current_user.orders %}
+                        <div class="orders-list">
+                            {% for order in current_user.orders %}
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <div class="order-info">
+                                        <h4>Order #{{ order.order_id }}</h4>
+                                        <p>{{ order.order_date.strftime('%B %d, %Y') }}</p>
+                                    </div>
+                                    <div class="order-status">
+                                        <span class="status-badge status-{{ order.status.lower() }}">{{ order.status }}</span>
+                                        <p class="order-total">${{ "%.2f"|format(order.total_amount) }}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="order-items">
+                                    {% for item in order.items %}
+                                    <div class="order-item">
+                                        <img src="{{ url_for('static', filename=item.book.image) }}" alt="{{ item.book.title }}" class="item-thumbnail">
+                                        <div class="item-details">
+                                            <h5>{{ item.book.title }}</h5>
+                                            <p>Quantity: {{ item.quantity }} × ${{ "%.2f"|format(item.book.price) }}</p>
+                                        </div>
+                                        <div class="item-total">
+                                            ${{ "%.2f"|format(item.get_total_price()) }}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="order-actions">
+                                    <a href="/order-confirmation/{{ order.order_id }}" class="btn btn-secondary btn-small">View Details</a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-orders">
+                            <p>You haven't placed any orders yet.</p>
+                            <a href="/" class="btn btn-primary">Start Shopping</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

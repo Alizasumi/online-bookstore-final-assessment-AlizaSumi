@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Online Bookstore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Online Bookstore Logo" class="logo">
+            <h1>Online Bookstore</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/cart">Cart</a>
+                <a href="/login" class="active">Login</a>
+                <a href="/register">Register</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-form-container">
+                <h2>Login to Your Account</h2>
+                
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form action="/login" method="post" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                
+                <div class="auth-links">
+                    <p>Don't have an account? <a href="/register">Register here</a></p>
+                </div>
+
+                <div class="demo-credentials">
+                    <h4>Demo Credentials</h4>
+                    <p>You can create a new account or use these demo credentials:</p>
+                    <p><strong>Email:</strong> demo@bookstore.com</p>
+                    <p><strong>Password:</strong> demo123</p>
+                    <button type="button" class="btn btn-secondary" onclick="fillDemoCredentials()">Use Demo Account</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function fillDemoCredentials() {
+            document.getElementById('email').value = 'demo@bookstore.com';
+            document.getElementById('password').value = 'demo123';
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Online Bookstore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Online Bookstore Logo" class="logo">
+            <h1>Online Bookstore</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/cart">Cart</a>
+                <a href="/checkout" class="active">Checkout</a>
+                {% if current_user %}
+                    <a href="/account">Account</a>
+                    <a href="/logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <section class="checkout-section">
+        <div class="container">
+            <h2>Checkout</h2>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form action="/process-checkout" method="post" class="checkout-form">
+                <div class="checkout-content">
+                    <!-- Order Summary -->
+                    <div class="order-summary">
+                        <h3>Order Summary</h3>
+                        <div class="checkout-items">
+                            {% for item in cart.get_items() %}
+                            <div class="checkout-item">
+                                <div class="item-info">
+                                    <img src="{{ url_for('static', filename=item.book.image) }}" alt="{{ item.book.title }}" class="item-thumbnail">
+                                    <div class="item-details">
+                                        <h4>{{ item.book.title }}</h4>
+                                        <p>{{ item.book.category }}</p>
+                                        <p>Quantity: {{ item.quantity }}</p>
+                                    </div>
+                                </div>
+                                <div class="item-price">
+                                    <p>${{ "%.2f"|format(item.book.price) }} each</p>
+                                    <p><strong>${{ "%.2f"|format(item.get_total_price()) }}</strong></p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="discount-section">
+                            <label for="discount_code">Discount Code:</label>
+                            <input type="text" id="discount_code" name="discount_code" placeholder="Enter discount code (try SAVE10 or WELCOME20)">
+                        </div>
+                        
+                        <div class="order-total">
+                            <p><strong>Total Items: {{ cart.get_total_items() }}</strong></p>
+                            <p class="final-total"><strong>Total: ${{ "%.2f"|format(total_price) }}</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Information -->
+                    <div class="shipping-info">
+                        <h3>Shipping Information</h3>
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" name="name" required 
+                                   value="{{ current_user.name if current_user else '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required 
+                                   value="{{ current_user.email if current_user else '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Street Address *</label>
+                            <input type="text" id="address" name="address" required 
+                                   value="{{ current_user.address if current_user else '' }}">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City *</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="zip_code">ZIP Code *</label>
+                                <input type="text" id="zip_code" name="zip_code" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    <div class="payment-info">
+                        <h3>Payment Information</h3>
+                        <div class="payment-methods">
+                            <label class="payment-method">
+                                <input type="radio" name="payment_method" value="credit_card" checked>
+                                <span>Credit Card</span>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="payment_method" value="paypal">
+                                <span>PayPal</span>
+                            </label>
+                        </div>
+                        
+                        <div class="credit-card-fields" id="credit-card-fields">
+                            <div class="form-group">
+                                <label for="card_number">Card Number</label>
+                                <input type="text" id="card_number" name="card_number" 
+                                       placeholder="1234 5678 9012 3456" maxlength="19">
+                                <small>Use card ending in 1111 to test payment failure</small>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expiry_date">Expiry Date</label>
+                                    <input type="text" id="expiry_date" name="expiry_date" 
+                                           placeholder="MM/YY" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cvv">CVV</label>
+                                    <input type="text" id="cvv" name="cvv" 
+                                           placeholder="123" maxlength="3">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="paypal-fields" id="paypal-fields" style="display: none;">
+                            <p>You will be redirected to PayPal to complete your payment.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-actions">
+                    <a href="/cart" class="btn btn-secondary">Back to Cart</a>
+                    <button type="submit" class="btn btn-primary">Complete Purchase</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        // Payment method toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+            const creditCardFields = document.getElementById('credit-card-fields');
+            const paypalFields = document.getElementById('paypal-fields');
+            const cardNumberField = document.getElementById('card_number');
+            const expiryField = document.getElementById('expiry_date');
+            const cvvField = document.getElementById('cvv');
+            
+            paymentMethods.forEach(method => {
+                method.addEventListener('change', function() {
+                    if (this.value === 'credit_card') {
+                        creditCardFields.style.display = 'block';
+                        paypalFields.style.display = 'none';
+                        cardNumberField.required = true;
+                        expiryField.required = true;
+                        cvvField.required = true;
+                    } else {
+                        creditCardFields.style.display = 'none';
+                        paypalFields.style.display = 'block';
+                        cardNumberField.required = false;
+                        expiryField.required = false;
+                        cvvField.required = false;
+                    }
+                });
+            });
+            
+            // Format card number input
+            cardNumberField.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, '');
+                value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                this.value = value;
+            });
+            
+            // Format expiry date
+            expiryField.addEventListener('input', function() {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                this.value = value;
+            });
+            
+            // Only allow numbers for CVV
+            cvvField.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+            });
+        });
+    </script>
+
+</body>
+</html>

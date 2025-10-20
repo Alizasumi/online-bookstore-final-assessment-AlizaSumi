@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Bookstore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Online Bookstore Logo" class="logo">
+            <h1>Online Bookstore</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/cart">Cart ({{ cart.get_total_items() }})</a>
+                <a href="/checkout">Checkout</a>
+                {% if current_user %}
+                    <a href="/account">Account</a>
+                    <a href="/logout">Logout</a>
+                    <span class="user-greeting">Hello, {{ current_user.name }}!</span>
+                {% else %}
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <section class="books-section">
+        <div class="container">
+            <h2>Featured Books</h2>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <div class="books-grid">
+                {% for book in books %}
+                <div class="book-card">
+                    <img src="{{ url_for('static', filename=book.image) }}" alt="{{ book.title }} Cover" class="book-cover">
+                    <h3>{{ book.title }}</h3>
+                    <p class="category">{{ book.category }}</p>
+                    <p class="price">${{ "%.2f"|format(book.price) }}</p>
+                    <form action="/add-to-cart" method="POST" class="add-to-cart-form">
+                        <input type="hidden" name="title" value="{{ book.title }}">
+                        <div class="quantity-selector">
+                            <label for="quantity-{{ loop.index }}">Qty:</label>
+                            <input type="number" name="quantity" value="1" min="1" max="10" id="quantity-{{ loop.index }}">
+                        </div>
+                        <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="cart-summary">
+        <div class="container">
+            <h3>Cart Summary</h3>
+            {% if cart.is_empty() %}
+                <p>Your cart is empty.</p>
+            {% else %}
+                <div class="cart-preview">
+                    <p><strong>Items in cart: {{ cart.get_total_items() }}</strong></p>
+                    <p><strong>Total: ${{ "%.2f"|format(cart.get_total_price()) }}</strong></p>
+                    <div class="cart-actions">
+                        <a href="/cart" class="btn btn-secondary">View Cart</a>
+                        <a href="/checkout" class="btn btn-primary">Checkout</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+</body>
+</html>

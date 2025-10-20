@@ -1,0 +1,53 @@
+name: CI - Tests & Coverage
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov beautifulsoup4
+
+      - name: Run tests with coverage
+        run: |
+          pytest --maxfail=1 --disable-warnings \
+                 --cov=. --cov-report=term-missing \
+                 --cov-report=html:coverage_html \
+                 --junitxml=test-results.xml
+
+      - name: Upload coverage HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage_html
+          path: coverage_html
+
+      - name: Upload JUnit (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit
+          path: test-results.xml
+
+      - name: Enforce coverage ≥80%
+        run: |
+          python - <<'PY'
+          import re, pathlib, sys
+          text = pathlib.Path('coverage_html/index.html').read_text('utf-8', errors='ignore')
+          m = re.search(r'Total[^%]+?(\\d+\\.\\d+)%', text)
+          cov = float(m.group(1)) if m else 0.0
+          print(f"Detected coverage: {cov}%")
+          sys.exit(0 if cov >= 80.0 else 1)
+          PY

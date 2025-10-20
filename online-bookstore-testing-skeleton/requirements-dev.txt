@@ -1,0 +1,5 @@
+# Dev-only dependencies for testing and CI
+pytest>=8.0.0
+pytest-cov>=5.0.0
+coverage>=7.6.0
+requests>=2.32.0
