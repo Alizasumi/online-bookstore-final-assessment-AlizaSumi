@@ -23,10 +23,12 @@ jobs:
           pip install pytest pytest-cov beautifulsoup4
 
       - name: Run tests with coverage
+        working-directory: online-bookstore-qa-aliza-sumi
+        env:
+        PYTHONPATH: ${{ github.workspace }}/online-bookstore-qa-aliza-sumi
         run: |
-          pytest --cov=. --cov-report=term-missing \
-           --cov-report=html:coverage_html \
-           --junitxml=test-results.xml
+          pytest --cov=. --cov-report=term-missing --cov-report=html:coverage_html \
+               --junitxml=test-results.xml
 
       - name: Upload coverage HTML
         uses: actions/upload-artifact@v4
