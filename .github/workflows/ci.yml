@@ -7,6 +7,7 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,18 +18,22 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
+        working-directory: online-bookstore-qa-aliza-sumi
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov beautifulsoup4
 
+      # Run pytest from the subfolder where your app and tests live
       - name: Run tests with coverage
         working-directory: online-bookstore-qa-aliza-sumi
         env:
-        PYTHONPATH: ${{ github.workspace }}/online-bookstore-qa-aliza-sumi
+          PYTHONPATH: ${{ github.workspace }}/online-bookstore-qa-aliza-sumi
         run: |
-          pytest --cov=. --cov-report=term-missing --cov-report=html:coverage_html \
-               --junitxml=test-results.xml
+          pytest -q --maxfail=1 --disable-warnings \
+            --cov=. --cov-report=term-missing \
+            --cov-report=html:${{ github.workspace }}/coverage_html \
+            --junitxml=${{ github.workspace }}/test-results.xml
 
       - name: Upload coverage HTML
         uses: actions/upload-artifact@v4
@@ -42,13 +47,14 @@ jobs:
           name: junit
           path: test-results.xml
 
+      # Optional gate: fail if coverage < 80%
       - name: Enforce coverage ≥80%
         run: |
-          python - <<'PY'
-          import re, pathlib, sys
-          text = pathlib.Path('coverage_html/index.html').read_text('utf-8', errors='ignore')
-          m = re.search(r'Total[^%]+?(\\d+\\.\\d+)%', text)
-          cov = float(m.group(1)) if m else 0.0
-          print(f"Detected coverage: {cov}%")
-          sys.exit(0 if cov >= 80.0 else 1)
+          python - << 'PY'
+          import sys, re, pathlib
+          report = pathlib.Path('coverage_html/index.html').read_text(errors='ignore')
+          m = re.search(r'Coverage.*?(\d+)\.?(\d*)%', report)
+          pct = float(m.group(1) + '.' + (m.group(2) or '0')) if m else 0.0
+          print(f'coverage={pct}%')
+          sys.exit(0 if pct >= 80 else 1)
           PY
