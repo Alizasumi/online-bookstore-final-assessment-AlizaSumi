@@ -24,10 +24,9 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --maxfail=1 --disable-warnings \
-                 --cov=. --cov-report=term-missing \
-                 --cov-report=html:coverage_html \
-                 --junitxml=test-results.xml
+          pytest --cov=. --cov-report=term-missing \
+           --cov-report=html:coverage_html \
+           --junitxml=test-results.xml
 
       - name: Upload coverage HTML
         uses: actions/upload-artifact@v4
